@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 from flask import Flask, request, url_for
 from flask_smorest import Api, Blueprint
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 from db import init_db, Tag
 
@@ -17,6 +17,10 @@ tags_app = Blueprint("tags", __name__, url_prefix="/v1")
 
 db = init_db(app)
 
+# Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry
+REGEX_EXPRESSION = "^[\w\d](?:\s?[\w\d])*$"
+ERROR_MESSAGE = "Nieprawna nazwa taga. Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry."
+
 
 class TagSchema(Schema):
     id = fields.UUID()
@@ -30,14 +34,21 @@ def get_tag(tag_id: str):
     return {"id": tag.id, "name": tag.name}
 
 
+class TagRequestSchema(Schema):
+    name = fields.String(
+        required=True,
+        validate=validate.Regexp(regex=REGEX_EXPRESSION, flags=0, error=ERROR_MESSAGE),
+    )
+
+
 @tags_app.route("/tags/", methods=["POST"])
+@tags_app.arguments(TagRequestSchema, location="json")
 @tags_app.response(HTTPStatus.OK, TagSchema)
-def add_tag():
-    name = request.json.get("name")
-    if name:
-        tag = Tag(name=name)
-        db.session.add(tag)
-        db.session.commit()
+def add_tag(data: dict):
+    name = data["name"]
+    tag = Tag(name=name)
+    db.session.add(tag)
+    db.session.commit()
 
     uri = url_for("tags.get_tag", tag_id=tag.id)
 
