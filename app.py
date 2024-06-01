@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, url_for
 
 from db import init_db, Tag
 
@@ -24,6 +24,10 @@ def add_tag():
         p = Tag(name=name)
         db.session.add(p)
         db.session.commit()
+
+    uri = url_for("get_tag", tag_id=p.id)
+
+    return p.id, 200, {"Location": uri}
 
 
 if __name__ == "__main__":
