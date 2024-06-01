@@ -19,7 +19,7 @@ db = init_db(app)
 
 
 class TagSchema(Schema):
-    id = fields.String()
+    id = fields.UUID()
     name = fields.String()
 
 
