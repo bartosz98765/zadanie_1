@@ -23,15 +23,14 @@ class TagSchema(Schema):
     name = fields.String()
 
 
-@name_app.route("/name/", methods=["GET"])
 @name_app.response(HTTPStatus.OK, TagSchema)
-@app.route("/tags/<tag_id>/", methods=["GET"])
+@name_app.route("/tags/<tag_id>/", methods=["GET"])
 def get_tag(tag_id: str):
     tag = db.get_or_404(Tag, tag_id)
     return {"id": tag.id, "name": tag.name}
 
 
-@app.route("/tags/", methods=["POST"])
+@name_app.route("/tags/", methods=["POST"])
 @name_app.response(HTTPStatus.OK, TagSchema)
 def add_tag():
     name = request.json.get("name")
@@ -40,10 +39,12 @@ def add_tag():
         db.session.add(tag)
         db.session.commit()
 
-    uri = url_for("get_tag", tag_id=tag.id)
+    uri = url_for("tags.get_tag", tag_id=tag.id)
 
     return {"id": tag.id, "name": tag.name}, {"Location": uri}
 
+
+api.register_blueprint(name_app)
 
 if __name__ == "__main__":
     app.run()
