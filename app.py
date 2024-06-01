@@ -44,6 +44,14 @@ def add_tag():
     return {"id": tag.id, "name": tag.name}, {"Location": uri}
 
 
+@name_app.route("/tags/<tag_id>/", methods=["DELETE"])
+@name_app.response(HTTPStatus.NO_CONTENT)
+def delete_tag(tag_id: str):
+    tag = db.session.get(Tag, tag_id)
+    db.session.delete(tag)
+    db.session.commit()
+
+
 api.register_blueprint(name_app)
 
 if __name__ == "__main__":
