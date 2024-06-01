@@ -13,7 +13,7 @@ db = init_db(app)
 
 @app.route('/tags/<tag_id>/', methods=['GET'])
 def get_tag(tag_id: str):
-    tag = db.get_or_404(Tag, id=tag_id)
+    tag = db.get_or_404(Tag, tag_id)
     return f"Tag o id: {tag.id} nazwa: {tag.name}>"
 
 
