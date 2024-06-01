@@ -13,7 +13,7 @@ app.config["OPENAPI_VERSION"] = "3.0.2"
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask_app.db"
 
 api = Api(app)
-name_app = Blueprint("tags", __name__, url_prefix="/v1")
+tags_app = Blueprint("tags", __name__, url_prefix="/v1")
 
 db = init_db(app)
 
@@ -23,15 +23,15 @@ class TagSchema(Schema):
     name = fields.String()
 
 
-@name_app.response(HTTPStatus.OK, TagSchema)
-@name_app.route("/tags/<tag_id>/", methods=["GET"])
+@tags_app.response(HTTPStatus.OK, TagSchema)
+@tags_app.route("/tags/<tag_id>/", methods=["GET"])
 def get_tag(tag_id: str):
     tag = db.get_or_404(Tag, tag_id)
     return {"id": tag.id, "name": tag.name}
 
 
-@name_app.route("/tags/", methods=["POST"])
-@name_app.response(HTTPStatus.OK, TagSchema)
+@tags_app.route("/tags/", methods=["POST"])
+@tags_app.response(HTTPStatus.OK, TagSchema)
 def add_tag():
     name = request.json.get("name")
     if name:
@@ -44,15 +44,15 @@ def add_tag():
     return {"id": tag.id, "name": tag.name}, {"Location": uri}
 
 
-@name_app.route("/tags/<tag_id>/", methods=["DELETE"])
-@name_app.response(HTTPStatus.NO_CONTENT)
+@tags_app.route("/tags/<tag_id>/", methods=["DELETE"])
+@tags_app.response(HTTPStatus.NO_CONTENT)
 def delete_tag(tag_id: str):
     tag = db.session.get(Tag, tag_id)
     db.session.delete(tag)
     db.session.commit()
 
 
-api.register_blueprint(name_app)
+api.register_blueprint(tags_app)
 
 if __name__ == "__main__":
     app.run()
