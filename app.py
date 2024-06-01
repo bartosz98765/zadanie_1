@@ -11,10 +11,10 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///flask_app.db"
 db = init_db(app)
 
 
-@app.route('/')
+@app.route("/")
 def hello_world():
-    return 'Hello World!'
+    return "Hello World!"
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run()
