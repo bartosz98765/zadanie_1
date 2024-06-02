@@ -56,7 +56,6 @@ class TagRequestSchema(Schema):
 @tags_app.route("/tags/", methods=["POST"])
 @tags_app.arguments(TagRequestSchema, location="json")
 @tags_app.response(HTTPStatus.OK, TagSchema)
-@tags_app.errorhandler(HTTPStatus.BAD_REQUEST)
 def add_tag(data: dict):
     name = data["name"]
     tag = Tag(name=name)
