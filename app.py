@@ -58,9 +58,10 @@ def invalid_tag_post_request_data_format_handler(error):
 @tags_app.route("/tags/<tag_id>/", methods=["DELETE"])
 @tags_app.response(HTTPStatus.NO_CONTENT)
 def delete_tag(tag_id: str):
-    tag = db.session.get(Tag, tag_id)
-    db.session.delete(tag)
-    db.session.commit()
+    __validate_tag(tag_id)
+    if tag := db.session.get(Tag, tag_id):
+        db.session.delete(tag)
+        db.session.commit()
 
 
 api.register_blueprint(tags_app)
