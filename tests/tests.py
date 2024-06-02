@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from db import Tag, db
-from settings import INVALID_TAG_ID_ERROR, TAG_DOES_NOT_EXIST_ERROR
+from settings import INVALID_TAG_ID_ERROR, TAG_DOES_NOT_EXIST_ERROR, INVALID_TAG_NAME_ERROR
 
 
 def create_tag(tag_name, session):
@@ -53,3 +53,13 @@ def test_add_tag_successfully(client):
     assert tag.name == tag_name
     assert response.json["id"] == tag.id
     assert response.headers["Location"] == f"http://localhost/v1/tags/{tag.id}/"
+
+
+def test_add_tag_returns_bad_request_when_invalid_tag_name(client):
+    tag_name = "Tag z  niedozwolonymi #$%#   znakami  "
+    url = f"/v1/tags/"
+
+    response = client.post(url, json={"name": tag_name})
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json == INVALID_TAG_NAME_ERROR
