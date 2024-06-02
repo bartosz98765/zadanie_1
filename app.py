@@ -5,6 +5,7 @@ from flask_smorest import Api, Blueprint
 from marshmallow import Schema, fields, validate, ValidationError
 
 from db import init_db, Tag
+from settings import INVALID_DATA_FORMAT_ERROR, TAG_NAME_VALIDATION_REGEX, INVALID_TAG_NAME_ERROR
 
 app = Flask(__name__)
 app.config["API_TITLE"] = "My API"
@@ -16,21 +17,6 @@ api = Api(app)
 tags_app = Blueprint("tags", __name__, url_prefix="/v1")
 
 db = init_db(app)
-
-# Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry
-TAG_NAME_VALIDATION_REGEX = "^[\w\d](?:\s?[\w\d])*$"
-INVALID_TAG_NAME_ERROR = {
-    "code": "invalid_tag_name",
-    "type": "https://127.0.0.1/v1/docs/problem-details/invalid_tag_name",
-    "detail": "Nieprawna nazwa taga. Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry.",
-    "status": HTTPStatus.BAD_REQUEST,
-}
-INVALID_DATA_FORMAT_ERROR = {
-    "code": "invalid_format",
-    "type": "https://127.0.0.1/v1/docs/problem-details/invalid_format",
-    "detail": "Nieprawny format danych. Oczekiwano application/json",
-    "status": HTTPStatus.METHOD_NOT_ALLOWED,
-}
 
 
 class TagSchema(Schema):
