@@ -40,17 +40,17 @@ def add_tag():
     return {"id": tag.id, "name": tag.name}, {"Location": uri}
 
 
+@app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+def invalid_tag_post_request_data_format_handler(error):
+    return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
+
+
 @tags_app.route("/tags/<tag_id>/", methods=["DELETE"])
 @tags_app.response(HTTPStatus.NO_CONTENT)
 def delete_tag(tag_id: str):
     tag = db.session.get(Tag, tag_id)
     db.session.delete(tag)
     db.session.commit()
-
-
-@app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
-def invalid_tag_post_request_data_format_handler(error):
-    return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
 
 
 api.register_blueprint(tags_app)
