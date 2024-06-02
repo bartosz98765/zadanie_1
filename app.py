@@ -5,8 +5,12 @@ from flask_smorest import Api, Blueprint
 from marshmallow import Schema, fields, validate, ValidationError
 
 from db import init_db, Tag
-from settings import INVALID_DATA_FORMAT_ERROR, TAG_NAME_VALIDATION_REGEX, INVALID_TAG_NAME_ERROR
-from tag_schema import TagRequestSchema
+from settings import (
+    INVALID_DATA_FORMAT_ERROR,
+    TAG_NAME_VALIDATION_REGEX,
+    INVALID_TAG_NAME_ERROR,
+)
+from tag_schema import TagRequestSchema, TagSchema
 
 app = Flask(__name__)
 app.config["API_TITLE"] = "My API"
@@ -18,11 +22,6 @@ api = Api(app)
 tags_app = Blueprint("tags", __name__, url_prefix="/v1")
 
 db = init_db(app)
-
-
-class TagSchema(Schema):
-    id = fields.UUID()
-    name = fields.String()
 
 
 @tags_app.route("/tags/<tag_id>/", methods=["GET"])
