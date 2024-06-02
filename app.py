@@ -25,6 +25,12 @@ INVALID_TAG_NAME_ERROR = {
     "detail": "Nieprawna nazwa taga. Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry.",
     "status": HTTPStatus.BAD_REQUEST,
 }
+INVALID_DATA_FORMAT_ERROR = {
+    "code": "invalid_format",
+    "type": "https://127.0.0.1/v1/docs/problem-details/invalid_format",
+    "detail": "Nieprawny format danych. Oczekiwano application/json",
+    "status": HTTPStatus.METHOD_NOT_ALLOWED,
+}
 
 
 class TagSchema(Schema):
@@ -39,6 +45,11 @@ def get_tag(tag_id: str):
     return {"id": tag.id, "name": tag.name}
 
 
+@app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+def invalid_data_format_handler():
+    return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
+
+
 class TagRequestSchema(Schema):
     name = fields.String(
         required=True,
@@ -50,7 +61,6 @@ class TagRequestSchema(Schema):
 
 
 @tags_app.route("/tags/", methods=["POST"])
-# @tags_app.arguments(TagRequestSchema, location="json")
 @tags_app.response(HTTPStatus.OK, TagSchema)
 def add_tag():
     name = request.json["name"]
