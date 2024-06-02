@@ -22,3 +22,9 @@ TAG_DOES_NOT_EXIST_ERROR = {
     "detail": "Tag nie został znaleziony",
     "status": HTTPStatus.NOT_FOUND,
 }
+INVALID_TAG_ID_ERROR = {
+    "code": "invalid_tag_id",
+    "type": "https://127.0.0.1/v1/docs/problem-details/invalid_tag_id",
+    "detail": "Niepoprawny identyfikator taga",
+    "status": HTTPStatus.BAD_REQUEST,
+}

@@ -7,7 +7,7 @@ from db import init_db, Tag
 from settings import (
     INVALID_DATA_FORMAT_ERROR, TAG_DOES_NOT_EXIST_ERROR,
 )
-from tag_schema import TagRequestSchema, TagSchema
+from tag_schema import TagRequestSchema, TagSchema, TagIdSchema
 
 app = Flask(__name__)
 app.config["API_TITLE"] = "My API"
@@ -24,8 +24,13 @@ db = init_db(app)
 @tags_app.route("/tags/<tag_id>/", methods=["GET"])
 @tags_app.response(HTTPStatus.OK, TagSchema)
 def get_tag(tag_id: str):
+    __validate_tag(tag_id)
     tag = db.get_or_404(Tag, tag_id)
     return {"id": tag.id, "name": tag.name}
+
+
+def __validate_tag(tag_id):
+    TagIdSchema().validate({"id": tag_id})
 
 
 @app.errorhandler(HTTPStatus.NOT_FOUND)
