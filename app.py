@@ -6,6 +6,7 @@ from marshmallow import Schema, fields, validate, ValidationError
 
 from db import init_db, Tag
 from settings import INVALID_DATA_FORMAT_ERROR, TAG_NAME_VALIDATION_REGEX, INVALID_TAG_NAME_ERROR
+from tag_schema import TagRequestSchema
 
 app = Flask(__name__)
 app.config["API_TITLE"] = "My API"
@@ -34,16 +35,6 @@ def get_tag(tag_id: str):
 @app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
 def invalid_data_format_handler():
     return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
-
-
-class TagRequestSchema(Schema):
-    name = fields.String(
-        required=True,
-        validate=validate.Regexp(regex=TAG_NAME_VALIDATION_REGEX),
-    )
-
-    def handle_error(self, exc, data, **kwargs):
-        raise abort(make_response(INVALID_TAG_NAME_ERROR, HTTPStatus.BAD_REQUEST))
 
 
 @tags_app.route("/tags/", methods=["POST"])
