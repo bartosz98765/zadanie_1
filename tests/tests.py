@@ -90,3 +90,12 @@ def test_delete_tag_successfully(client):
     tag_in_repository = db.session.get(Tag, tag.id)
     assert tag_in_repository is None
 
+
+def test_delete_tag_returns_bad_request_when_invalid_tag_id(client):
+    tag_id = "0665ca92-invalid-tag-id"
+    url = f"/v1/tags/{tag_id}/"
+
+    response = client.delete(url)
+
+    assert response.status_code == HTTPStatus.BAD_REQUEST
+    assert response.json == INVALID_TAG_ID_ERROR
