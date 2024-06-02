@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from db import Tag, db
-from settings import INVALID_TAG_ID_ERROR
+from settings import INVALID_TAG_ID_ERROR, TAG_DOES_NOT_EXIST_ERROR
 
 
 def create_tag(tag_name, session):
@@ -30,3 +30,13 @@ def test_get_tag_returns_bad_request_when_invalid_tag_id(client):
 
     assert response.status_code == HTTPStatus.BAD_REQUEST
     assert response.json == INVALID_TAG_ID_ERROR
+
+
+def test_get_tag_returns_not_found_when_tag_not_exist(client):
+    tag_id = "0665ca92-4695-75a3-8000-f6494aef40c6"
+    url = f"/v1/tags/{tag_id}/"
+
+    response = client.get(url)
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+    assert response.json == TAG_DOES_NOT_EXIST_ERROR
