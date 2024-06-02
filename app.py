@@ -5,7 +5,7 @@ from flask_smorest import Api, Blueprint
 
 from db import init_db, Tag
 from settings import (
-    INVALID_DATA_FORMAT_ERROR,
+    INVALID_DATA_FORMAT_ERROR, TAG_DOES_NOT_EXIST_ERROR,
 )
 from tag_schema import TagRequestSchema, TagSchema
 
@@ -26,6 +26,11 @@ db = init_db(app)
 def get_tag(tag_id: str):
     tag = db.get_or_404(Tag, tag_id)
     return {"id": tag.id, "name": tag.name}
+
+
+@app.errorhandler(HTTPStatus.NOT_FOUND)
+def tag_does_not_exist_handler(error):
+    return make_response(TAG_DOES_NOT_EXIST_ERROR, HTTPStatus.NOT_FOUND)
 
 
 @tags_app.route("/tags/", methods=["POST"])
