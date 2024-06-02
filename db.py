@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from uuid_extensions import uuid7
+from uuid_extensions import uuid7str
 
 db = SQLAlchemy()
 
@@ -11,7 +11,7 @@ def init_db(app):
 
 class Tag(db.Model):
 
-    id = db.Column(db.String(64), primary_key=True, default=str(uuid7()))
+    id = db.Column(db.String(64), primary_key=True, default=uuid7str)
     name = db.Column(db.String(256), unique=False, nullable=False)
 
     def __repr__(self):
