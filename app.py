@@ -49,7 +49,7 @@ def create_app(config_class=Config):
         db.session.add(tag)
         db.session.commit()
 
-        uri = url_for("tags.get_tag", tag_id=tag.id)
+        uri = url_for("tags.get_tag", tag_id=tag.id, _external=True)
         return {"id": tag.id, "name": tag.name}, {"Location": uri}
 
     @app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)

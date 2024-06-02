@@ -40,3 +40,16 @@ def test_get_tag_returns_not_found_when_tag_not_exist(client):
 
     assert response.status_code == HTTPStatus.NOT_FOUND
     assert response.json == TAG_DOES_NOT_EXIST_ERROR
+
+
+def test_add_tag_successfully(client):
+    tag_name = "Poprawna nazwa taga"
+    url = f"/v1/tags/"
+
+    response = client.post(url, json={"name": tag_name})
+
+    tag = db.session.query(Tag).filter_by(name=tag_name).first()
+    assert response.status_code == HTTPStatus.OK
+    assert tag.name == "Poprawna nazwa taga"
+    assert response.json["id"] == tag.id
+    assert response.headers["Location"] == f"http://localhost/v1/tags/{tag.id}/"
