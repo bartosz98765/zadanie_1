@@ -1,0 +1,9 @@
+**/docker-compose.yaml
+**/Dockerfile
+**/.dockerignore
+**/.git
+**/.idea
+**/__pycache__
+**/pytest.ini
+**/venv
+**/instance
