@@ -18,3 +18,5 @@ def test_get_tag(client):
     response = client.get(url)
 
     assert response.status_code == HTTPStatus.OK
+    assert response.json["id"] == tag.id
+    assert response.json["name"] == tag.name
