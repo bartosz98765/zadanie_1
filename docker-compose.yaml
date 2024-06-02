@@ -1,6 +1,7 @@
 version: "3.3"
 services:
   tags:
+    container_name: tags-rest
     build: .
     ports:
       - "5000:5000"
