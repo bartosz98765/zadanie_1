@@ -46,11 +46,7 @@ class TagRequestSchema(Schema):
     )
 
     def handle_error(self, exc, data, **kwargs):
-        raise abort(self.error_response(exc, data))
-
-    @staticmethod
-    def error_response(exc, data):
-        return make_response(INVALID_TAG_NAME_ERROR)
+        raise abort(make_response(INVALID_TAG_NAME_ERROR))
 
 
 @tags_app.route("/tags/", methods=["POST"])
