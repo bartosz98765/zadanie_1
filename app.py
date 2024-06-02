@@ -31,11 +31,6 @@ def get_tag(tag_id: str):
     return {"id": tag.id, "name": tag.name}
 
 
-@app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
-def invalid_data_format_handler():
-    return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
-
-
 @tags_app.route("/tags/", methods=["POST"])
 @tags_app.response(HTTPStatus.OK, TagSchema)
 def add_tag():
@@ -54,6 +49,11 @@ def delete_tag(tag_id: str):
     tag = db.session.get(Tag, tag_id)
     db.session.delete(tag)
     db.session.commit()
+
+
+@app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+def invalid_data_format_handler():
+    return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
 
 
 api.register_blueprint(tags_app)
