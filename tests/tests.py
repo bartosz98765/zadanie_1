@@ -50,6 +50,6 @@ def test_add_tag_successfully(client):
 
     tag = db.session.query(Tag).filter_by(name=tag_name).first()
     assert response.status_code == HTTPStatus.OK
-    assert tag.name == "Poprawna nazwa taga"
+    assert tag.name == tag_name
     assert response.json["id"] == tag.id
     assert response.headers["Location"] == f"http://localhost/v1/tags/{tag.id}/"
