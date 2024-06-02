@@ -43,7 +43,7 @@ def test_get_tag_returns_not_found_when_tag_not_exist(client):
 
 
 def test_add_tag_successfully(client):
-    tag_name = "Poprawna nazwa taga"
+    tag_name = "Poprawna 111 nazwa taga22"
     url = f"/v1/tags/"
 
     response = client.post(url, json={"name": tag_name})
