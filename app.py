@@ -49,7 +49,7 @@ def delete_tag(tag_id: str):
 
 
 @app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
-def invalid_data_format_handler(error):
+def invalid_tag_post_request_data_format_handler(error):
     return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
 
 
