@@ -2,13 +2,10 @@ from http import HTTPStatus
 
 from flask import Flask, request, url_for, abort, make_response
 from flask_smorest import Api, Blueprint
-from marshmallow import Schema, fields, validate, ValidationError
 
 from db import init_db, Tag
 from settings import (
     INVALID_DATA_FORMAT_ERROR,
-    TAG_NAME_VALIDATION_REGEX,
-    INVALID_TAG_NAME_ERROR,
 )
 from tag_schema import TagRequestSchema, TagSchema
 
@@ -52,7 +49,7 @@ def delete_tag(tag_id: str):
 
 
 @app.errorhandler(HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
-def invalid_data_format_handler():
+def invalid_data_format_handler(error):
     return make_response(INVALID_DATA_FORMAT_ERROR, HTTPStatus.METHOD_NOT_ALLOWED)
 
 
