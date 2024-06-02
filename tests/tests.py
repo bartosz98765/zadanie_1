@@ -49,7 +49,7 @@ def test_get_tag_returns_not_found_when_tag_not_exist(client):
 
 def test_add_tag_successfully(client):
     tag_name = "Poprawna 111 nazwa taga22"
-    url = f"/v1/tags/"
+    url = "/v1/tags/"
 
     response = client.post(url, json={"name": tag_name})
 
@@ -62,7 +62,7 @@ def test_add_tag_successfully(client):
 
 def test_add_tag_returns_bad_request_when_invalid_tag_name(client):
     tag_name = "Tag z  niedozwolonymi #$%#   znakami  "
-    url = f"/v1/tags/"
+    url = "/v1/tags/"
 
     response = client.post(url, json={"name": tag_name})
 
@@ -72,9 +72,21 @@ def test_add_tag_returns_bad_request_when_invalid_tag_name(client):
 
 def test_add_tag_returns_method_not_allowed_when_data_not_json_format(client):
     tag_name = "Poprawny tag"
-    url = f"/v1/tags/"
+    url = "/v1/tags/"
 
     response = client.post(url, data={"name": tag_name})
 
     assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
     assert response.json == INVALID_DATA_FORMAT_ERROR
+
+
+def test_delete_tag_successfully(client):
+    tag = create_tag("Testowy tag", db.session)
+    url = f"/v1/tags/{tag.id}/"
+
+    response = client.delete(url)
+
+    assert response.status_code == HTTPStatus.NO_CONTENT
+    tag_in_repository = db.session.get(Tag, tag.id)
+    assert tag_in_repository is None
+
