@@ -1,8 +1,8 @@
 from http import HTTPStatus
 
-from flask import Flask, request, url_for
+from flask import Flask, request, url_for, abort, make_response
 from flask_smorest import Api, Blueprint
-from marshmallow import Schema, fields, validate
+from marshmallow import Schema, fields, validate, ValidationError
 
 from db import init_db, Tag
 
@@ -18,8 +18,13 @@ tags_app = Blueprint("tags", __name__, url_prefix="/v1")
 db = init_db(app)
 
 # Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry
-REGEX_EXPRESSION = "^[\w\d](?:\s?[\w\d])*$"
-ERROR_MESSAGE = "Nieprawna nazwa taga. Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry."
+TAG_NAME_VALIDATION_REGEX = "^[\w\d](?:\s?[\w\d])*$"
+INVALID_TAG_NAME_ERROR = {
+    "code": "invalid_tag_name",
+    "type": "https://127.0.0.1/v1/docs/problem-details/invalid_tag_name",
+    "detail": "Nieprawna nazwa taga. Nazwa musi składać się z jednego lub więcej słów w skład których wchodza jedynie litery i cyfry.",
+    "status": HTTPStatus.BAD_REQUEST,
+}
 
 
 class TagSchema(Schema):
@@ -27,8 +32,8 @@ class TagSchema(Schema):
     name = fields.String()
 
 
-@tags_app.response(HTTPStatus.OK, TagSchema)
 @tags_app.route("/tags/<tag_id>/", methods=["GET"])
+@tags_app.response(HTTPStatus.OK, TagSchema)
 def get_tag(tag_id: str):
     tag = db.get_or_404(Tag, tag_id)
     return {"id": tag.id, "name": tag.name}
@@ -37,13 +42,21 @@ def get_tag(tag_id: str):
 class TagRequestSchema(Schema):
     name = fields.String(
         required=True,
-        validate=validate.Regexp(regex=REGEX_EXPRESSION, flags=0, error=ERROR_MESSAGE),
+        validate=validate.Regexp(regex=TAG_NAME_VALIDATION_REGEX),
     )
+
+    def handle_error(self, exc, data, **kwargs):
+        raise abort(self.error_response(exc, data))
+
+    @staticmethod
+    def error_response(exc, data):
+        return make_response(INVALID_TAG_NAME_ERROR)
 
 
 @tags_app.route("/tags/", methods=["POST"])
 @tags_app.arguments(TagRequestSchema, location="json")
 @tags_app.response(HTTPStatus.OK, TagSchema)
+@tags_app.errorhandler(HTTPStatus.BAD_REQUEST)
 def add_tag(data: dict):
     name = data["name"]
     tag = Tag(name=name)
@@ -51,7 +64,6 @@ def add_tag(data: dict):
     db.session.commit()
 
     uri = url_for("tags.get_tag", tag_id=tag.id)
-
     return {"id": tag.id, "name": tag.name}, {"Location": uri}
 
 
