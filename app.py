@@ -63,8 +63,8 @@ class TagRequestSchema(Schema):
 @tags_app.route("/tags/", methods=["POST"])
 @tags_app.response(HTTPStatus.OK, TagSchema)
 def add_tag():
-    name = request.json["name"]
-    tag = Tag(name=name)
+    tag_data = TagRequestSchema().load(request.json)
+    tag = Tag(name=tag_data["name"])
     db.session.add(tag)
     db.session.commit()
 
