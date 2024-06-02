@@ -21,7 +21,6 @@ class Config:
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///tags.db"
     api = Api(app)
 
     db = init_db(app)

@@ -3,7 +3,11 @@ from http import HTTPStatus
 from flask import make_response, abort
 from marshmallow import Schema, fields, validate
 
-from settings import TAG_NAME_VALIDATION_REGEX, INVALID_TAG_NAME_ERROR, INVALID_TAG_ID_ERROR
+from settings import (
+    TAG_NAME_VALIDATION_REGEX,
+    INVALID_TAG_NAME_ERROR,
+    INVALID_TAG_ID_ERROR,
+)
 
 
 class TagRequestSchema(Schema):
